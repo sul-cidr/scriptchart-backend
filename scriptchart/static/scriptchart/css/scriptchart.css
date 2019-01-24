@@ -1,0 +1,55 @@
+.ui-helper-hidden-accessible {
+    display: none;
+}
+
+.zoom {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    float: left;
+    left: 0;
+    text-shadow: 0px 0px 5px lightgrey;
+}
+
+.annotator-options-controls {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    float: left;
+    left: 0;
+    width: 100%;
+    background: white;
+    padding-bottom: 5px;
+}
+
+.annotator-control {
+    display: inline;
+}
+
+.annotator-options {
+    display: inline-block;
+    width: 19%;
+    overflow: scroll;
+    height: 500px;
+}
+
+.annotator-container {
+    width: 80%;
+    height: 500px;
+    overflow: scroll;
+    display: inline-block;
+    background-color: lightgrey;
+}
+
+.annotated_bounding_box div {
+  display: none;
+}
+
+.annotated_bounding_box:hover div {
+  display: block;
+}
+
+.letter-toggles-none,
+.letter-toggles-all {
+    font-weight: bold;
+}

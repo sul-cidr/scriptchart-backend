@@ -1,0 +1,84 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static admin_static admin_modify %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+&rsaquo; <a href="{% url 'admin:scripts_page_changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+&rsaquo; <a href="{% url 'admin:scripts_page_change' page.id %}">{{ page|capfirst }}</a>
+&rsaquo; {% trans 'Coordinates' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>Change {{page}} Coordinates</h1>
+<div id="content-main">
+
+  <ul class="object-tools">
+    <li>
+        <a href="{% url 'admin:scripts-page-coordinates-download' page.pk %}" class="historylink">{% trans "Download" %}</a>
+    </li>
+  </ul>
+
+  <form action="" method="POST">
+    {% csrf_token %}
+     {% if form.non_field_errors|length > 0 %}
+      <p class="errornote">
+          "Please correct the errors below."
+      </p>
+      {{ form.non_field_errors }}
+    {% endif %}
+    {% for field in form %}
+        {{ field.errors }}
+        {{ field }}
+        {% if field.field.help_text %}
+        <p class="help">
+            {{ field.field.help_text|safe }}
+        </p>
+        {% endif %}
+    {% endfor %}
+    <div class="annotator-control">
+        <div class="annotator-container">
+            <div class="zoom">
+                <span>▴</span>
+                <input type="range" id="zoom" step=".1" name="zoom" min="-3" max="3" value="0">
+                <span>▲</span>
+            </div>
+            <div id="annotator"></div>
+        </div>
+        <div class="annotator-options">
+            <div class="annotator-options-controls">
+                <label>Letters</label>
+                <button type="button" id="letters-none">{% trans "None" %}</button>
+                <button type="button" id="letters-all">{% trans "All" %}</button>
+            </div>
+        {% for letter in letters %}
+            <div>
+                <input type="checkbox" class="letter-toggles" checked name="{{ letter }}" id="{{ letter }}">
+                <label for="{{ letter }}">{{ letter }}</label>
+            </div>
+        {% endfor %}
+        </div>
+        <datalist id="letters">
+        {% for letter in letters %}
+            <option value="{{ letter }}">
+        {% endfor %}
+        </datalist>
+    </div>
+    <div class="submit-row">
+      <input type="submit" class="default" value="{% trans "Save" %}" />
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'scriptchart/css/scriptchart.css' %}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.js"></script>
+<script type="text/javascript" src="{% static 'scriptchart/js/datalist-polyfill.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'scriptchart/js/bbox_annotator.js' %}"></script>
+<script type="text/javascript" src="{% static 'scriptchart/js/page_coordinates.js' %}"></script>
+{% endblock %}
