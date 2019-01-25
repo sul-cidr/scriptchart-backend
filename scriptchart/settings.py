@@ -3,7 +3,7 @@ import dj_database_url
 try:
     import pymysql
     pymysql.install_as_MySQLdb()
-except:
+except Exception:
     pass
 
 

@@ -3,7 +3,7 @@ from io import BytesIO
 from zipfile import ZipFile
 
 import requests
-from PIL import Image
+from PIL import Image, ImageFile
 
 
 def get_sizes(image_uri):
