@@ -1,5 +1,11 @@
 import os
 import dj_database_url
+try:
+    import pymysql
+    pymysql.install_as_MySQLdb()
+except:
+    pass
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('SECRET_KEY', '^o)vp)-7km6k&2t5+0ilk4i_jl%#c3a9o^@mojux%2v*8ngdyz')
@@ -23,6 +29,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -51,6 +58,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'scriptchart.wsgi.application'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DATABASES = {
     'default': {

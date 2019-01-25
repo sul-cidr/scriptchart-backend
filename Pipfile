@@ -17,6 +17,7 @@ django-admin-rangefilter = "*"
 django = ">=2.1"
 ipdb = "*"
 dj-database-url = "*"
+whitenoise = "*"
 
 [requires]
 python_version = "3.7"
