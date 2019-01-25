@@ -59,6 +59,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'scriptchart.wsgi.application'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = 'static'
 
 DATABASES = {
     'default': {
