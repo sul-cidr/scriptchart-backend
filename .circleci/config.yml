@@ -1,57 +1,49 @@
-# Python CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-python/ for more details
-#
 version: 2
 jobs:
   build:
-    docker:
-      # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.6.1
-      
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
     working_directory: ~/repo
-
+    docker:
+      - image: circleci/python:3.7.2
+        environment:
+          PIPENV_VENV_IN_PROJECT: true
+          DATABASE_URL: postgresql://root@localhost/test?sslmode=disable
+      - image: circleci/postgres:9.6.2
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_DB: test
     steps:
       - checkout
-
-      # Download and cache dependencies
+      - run:
+          name: Setting permissions
+          command: |
+            sudo chown -R circleci:circleci /usr/local/bin
+            sudo chown -R circleci:circleci /usr/local/lib/python3.7/site-packages
       - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "requirements.txt" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
+          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run:
-          name: install dependencies
+          name: Install dependencies
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install pipenv
+            sudo pip install pipenv
             pipenv install
-
+            pipenv install psycopg2 flake8 codecov coverage
+            pipenv run python manage.py migrate
       - save_cache:
+          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
           paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
-        
-      # run tests!
-      # this example uses Django's built-in test-runner
-      # other common Python testing frameworks include pytest and nose
-      # https://pytest.org
-      # https://nose.readthedocs.io
+            - ".venv"
+            - "/usr/local/bin"
+            - "/usr/local/lib/python3.7/site-packages"
       - run:
-          name: run tests
+          name: Run tests
           command: |
-            . venv/bin/activate
-            python manage.py test
-
+            pipenv run coverage run manage.py test
+      - run:
+          name: Run linting and metrics
+          command: |
+            pipenv run flake8 ./ tests --output-file test-results
+            pipenv run codecov
+      - store_test_results:
+          path: test-results
       - store_artifacts:
-          path: test-reports
-          destination: test-reports
-          
+          path: test-results
+          destination: tr1

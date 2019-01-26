@@ -8,7 +8,6 @@ ipython = "*"
 ipdb = "*"
 
 [packages]
-mysqlclient = "*"
 requests = "*"
 pillow = "*"
 tqdm = "*"
@@ -18,6 +17,7 @@ django = ">=2.1"
 ipdb = "*"
 dj-database-url = "*"
 whitenoise = "*"
+flake8 = "*"
 
 [requires]
 python_version = "3.7"

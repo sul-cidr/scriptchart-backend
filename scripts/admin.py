@@ -1,15 +1,11 @@
-import json
-import requests
 from pytz import datetime
 
-from django.conf import settings
 from django.contrib import admin, messages
 from django.contrib.admin.widgets import AdminURLFieldWidget
 from django.db import models
-from django.db.models import F
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template.response import TemplateResponse
-from django.urls import reverse, path, re_path as url
+from django.urls import reverse, re_path as url
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
@@ -24,6 +20,8 @@ def page_image(page):
     return mark_safe(f"""
     <img src="{page.url}" width=100 style="border: 1px solid lightgrey;">
     """)
+
+
 page_image.safe = True
 
 
@@ -69,6 +67,8 @@ def coordinates_image(coordinates, context_pixels=0):
         ">
     </div>
     """)
+
+
 coordinates_image.safe = True
 
 
@@ -76,7 +76,7 @@ class AdminURLImageWidget(AdminURLFieldWidget):
     def render(self, name, value, attrs=None, renderer=None):
         output = []
         if value:
-            style = "border: 1px solid lightgrey; max-width: 100px;";
+            style = "border: 1px solid lightgrey; max-width: 100px;"
             output.append(
                 f'<a href="{value}" target="_blank">'
                 f'<img src="{value}" alt="{value}" style="{style}"/></a>')
@@ -204,7 +204,9 @@ class PageAdmin(admin.ModelAdmin):
                 return HttpResponseRedirect(url)
         context = self.admin_site.each_context(request)
         context['opts'] = self.model._meta
-        context['letters'] = (Letter.objects
+        context['letters'] = (
+            Letter
+            .objects
             .values_list('letter', flat=True)
             .order_by('letter')
             .distinct()

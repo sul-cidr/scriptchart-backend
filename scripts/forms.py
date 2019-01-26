@@ -4,7 +4,7 @@ from django import forms
 from django.core import validators
 from django.db.models import F
 from django.utils.translation import gettext as _
-from .models import Coordinates, Page, Letter
+from .models import Coordinates, Letter
 
 
 class PageCoordinatesForm(forms.Form):
@@ -19,18 +19,19 @@ class PageCoordinatesForm(forms.Form):
         self.page = kwargs.pop('instance')
         super().__init__(*args, **kwargs)
         self.fields['url'].initial = self.page.url
-        annotations = list(self.page
-            .coordinates
-            .annotate(label=F('letter__letter'))
-            .all()
-            .values('left', 'top', 'height', 'width', 'label')
+        annotations = list(
+            self.page
+                .coordinates
+                .annotate(label=F('letter__letter'))
+                .all()
+                .values('left', 'top', 'height', 'width', 'label')
         )
         self.fields['annotations'].initial = json.dumps(annotations)
 
     def clean_url(self):
         url = self.cleaned_data['url']
         if validators.URLValidator()(url):
-            raise ValidationError(
+            raise forms.ValidationError(
                 _('Invalid URL: %(url)s'),
                 code='invalid',
                 params={'url': url},
@@ -42,7 +43,7 @@ class PageCoordinatesForm(forms.Form):
         try:
             annotations = json.loads(annotations)
         except json.decoder.JSONDecodeError:
-            raise ValidationError(
+            raise forms.ValidationError(
                 _('Invalid JSON annotations: %(annotations)s'),
                 code='invalid',
                 params={'annotations': annotations},
@@ -78,4 +79,3 @@ class PageCoordinatesForm(forms.Form):
                 width=annotation['width'],
                 height=annotation['height'],
             )
-
