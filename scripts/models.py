@@ -1,7 +1,5 @@
 from django.db import models
-
 from .utils import get_sizes
-
 
 class Manuscript(models.Model):
     shelfmark = models.CharField(unique=True, max_length=250)

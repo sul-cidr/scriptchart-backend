@@ -28,6 +28,8 @@ INSTALLED_APPS = [
 
     'rangefilter',
 
+    'rest_framework',
+
     'scriptchart',
     'scripts',
 ]
