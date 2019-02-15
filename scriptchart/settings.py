@@ -29,12 +29,14 @@ INSTALLED_APPS = [
     'rangefilter',
 
     'rest_framework',
+    'corsheaders',
 
     'scriptchart',
     'scripts',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -46,6 +48,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'scriptchart.urls'
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 TEMPLATES = [
     {
