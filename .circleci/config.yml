@@ -54,10 +54,15 @@ jobs:
     working_directory: ~
     steps:
       - run:
+          name: Install LFTP
+          command: |
+            sudo apt-get update;
+            sudo apt-get install lftp;
           name: Deploy
           command: |
             touch deploy.txt
             # sftp $FTP_USER:$FTP_PASS@$FTP_HOST:$FTP_PATH <<< $'put deploy.txt'
+            lftp -u $FTP_USER,$FTP_PASS -e "set ftp:ssl-allow no;put deploy.txt;quit" $FTP_HOST:$FTP_PATH
 
 workflows:
   version: 2
@@ -79,6 +84,7 @@ workflows:
             tags:
               ignore: /.*/
       - deploy_to_prod:
+          working_directory: ~/db
           filters:
             branches:
               only: master
