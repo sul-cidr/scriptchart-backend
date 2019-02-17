@@ -60,7 +60,7 @@ jobs:
             sudo apt-get install lftp
             touch deploy.txt
             # sftp $FTP_USER:$FTP_PASS@$FTP_HOST:$FTP_PATH <<< $'put deploy.txt'
-            # lftp -u $FTP_USER,$FTP_PASS -e "set ftp:ssl-allow no;put deploy.txt;quit" $FTP_HOST:$FTP_PATH
+            lftp -u $FTP_USER,$FTP_PASS -e "set ftp:ssl-allow no;put deploy.txt;quit" $FTP_HOST:$FTP_PATH
 
 workflows:
   version: 2
@@ -73,7 +73,7 @@ workflows:
                 - devel
                 - master
 
-  build:
+  deploy_master_to_prod:
     jobs:
       - run_tests:
           filters:
