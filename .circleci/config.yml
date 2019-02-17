@@ -82,7 +82,6 @@ workflows:
             tags:
               ignore: /.*/
       - deploy_to_prod:
-          working_directory: ~/db
           filters:
             branches:
               only: master
