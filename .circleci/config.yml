@@ -54,11 +54,10 @@ jobs:
     working_directory: ~
     steps:
       - run:
-          name: Install LFTP
+          name: Install LFTP and deploy
           command: |
             sudo apt-get update;
             sudo apt-get install lftp;
-          name: Deploy
           command: |
             touch deploy.txt
             # sftp $FTP_USER:$FTP_PASS@$FTP_HOST:$FTP_PATH <<< $'put deploy.txt'
