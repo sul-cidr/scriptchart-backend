@@ -15,6 +15,9 @@ load_dotenv()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get(
     'SECRET_KEY', '^o)vp)-7km6k&2t5+0ilk4i_jl%#c3a9o^@mojux%2v*8ngdyz')
+# TOFIX: Per the doucmentation, ALLOWED_HOSTS is only checked if DEBUG i
+#        false (i.e., in production). ALLOWED_HOSTS will need to be set
+#        correctly in deployed proudction environment if used.
 DEBUG = os.environ.get('DEBUG', 'true').lower() == 'true'
 ALLOWED_HOSTS = os.environ.get(
     'ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0').split(',')
