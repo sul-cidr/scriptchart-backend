@@ -28,4 +28,3 @@ class CoordinatesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coordinates
         fields = ('id', 'page', 'letter', 'top', 'left', 'width', 'height')
-
