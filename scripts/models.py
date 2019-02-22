@@ -1,5 +1,4 @@
 from django.db import models
-
 from .utils import get_sizes
 
 
