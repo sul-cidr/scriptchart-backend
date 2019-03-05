@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  run_tests:
     working_directory: ~/repo
     docker:
       - image: circleci/python:3.7.2
@@ -47,3 +47,43 @@ jobs:
       - store_artifacts:
           path: test-results
           destination: tr1
+
+  deploy_to_prod:
+    docker:
+      - image: circleci/python:3.7.2
+    working_directory: ~
+    steps:
+      - run:
+          name: Install LFTP and deploy
+          command: |
+            sudo apt-get update
+            sudo apt-get install lftp
+            touch deploy.txt
+            # sftp $FTP_USER:$FTP_PASS@$FTP_HOST:$FTP_PATH <<< $'put deploy.txt'
+            lftp -u $FTP_USER,$FTP_PASS -e "set ftp:ssl-allow no;put deploy.txt;quit" $FTP_HOST:$FTP_PATH
+
+workflows:
+  version: 2
+  run_tests:
+    jobs:
+      - run_tests:
+          filters:
+            branches:
+              ignore:
+                - devel
+                - master
+
+  deploy_master_to_prod:
+    jobs:
+      - run_tests:
+          filters:
+            branches:
+              only: master
+            tags:
+              ignore: /.*/
+      - deploy_to_prod:
+          filters:
+            branches:
+              only: master
+            tags:
+              ignore: /.*/

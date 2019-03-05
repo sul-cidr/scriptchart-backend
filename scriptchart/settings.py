@@ -1,16 +1,26 @@
 import os
+
 import dj_database_url
+from dotenv import load_dotenv
+
 try:
-    import pymysql
+    import pymysql  # pylint: disable=import-error
     pymysql.install_as_MySQLdb()
 except Exception:
     pass
 
 
+load_dotenv()
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SECRET_KEY = os.environ.get('SECRET_KEY', '^o)vp)-7km6k&2t5+0ilk4i_jl%#c3a9o^@mojux%2v*8ngdyz')
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY', '^o)vp)-7km6k&2t5+0ilk4i_jl%#c3a9o^@mojux%2v*8ngdyz')
+# TOFIX: Per the doucmentation, ALLOWED_HOSTS is only checked if DEBUG is
+#        false (i.e., in production). ALLOWED_HOSTS will need to be set
+#        correctly in deployed proudction environment if used.
 DEBUG = os.environ.get('DEBUG', 'true').lower() == 'true'
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0').split(',')
+ALLOWED_HOSTS = os.environ.get(
+    'ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0').split(',')
 ADMIN_SITE_HEADER = 'Scriptchart administration'
 
 INSTALLED_APPS = [
@@ -23,11 +33,15 @@ INSTALLED_APPS = [
 
     'rangefilter',
 
+    'rest_framework',
+    'corsheaders',
+
     'scriptchart',
     'scripts',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -39,6 +53,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'scriptchart.urls'
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 TEMPLATES = [
     {
@@ -61,16 +77,17 @@ WSGI_APPLICATION = 'scriptchart.wsgi.application'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = 'static'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': os.path.join(BASE_DIR, 'mysql.cnf'),
-        },
-    }
-}
 if 'DATABASE_URL' in os.environ:
-    DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+    DATABASES = {
+        'default': dj_database_url.config(conn_max_age=600)
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'DBNAME': os.path.join(BASE_DIR, 'tmp', 'db.sqlite'),
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
