@@ -10,8 +10,14 @@ from scripts.serializers import CoordinatesSerializer
 
 
 class ManuscriptList(generics.ListAPIView):
-    queryset = Manuscript.objects.all()
     serializer_class = ManuscriptSerializer
+        
+    def get_queryset(self):
+        queryset = Manuscript.objects.all()
+        manifest_avail_flag = self.request.query_params.get('manifest_available', None)
+        if manifest_avail_flag is not None:
+            queryset = queryset.exclude(manifest=None)
+        return queryset
 
 
 class ManuscriptDetail(generics.RetrieveAPIView):
