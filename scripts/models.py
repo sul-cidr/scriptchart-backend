@@ -15,6 +15,7 @@ class Manuscript(models.Model):
     manifest = models.URLField(blank=True, null=True)
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
+    display = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.shelfmark}"
