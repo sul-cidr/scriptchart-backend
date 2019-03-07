@@ -153,10 +153,10 @@ class LetterAdmin(admin.ModelAdmin):
 class ManuscriptAdmin(admin.ModelAdmin):
     list_display = ('shelfmark', 'source', 'page', 'folio',
                     'catalogue', 'date', 'scribe', 'resolution',
-                    'notes')
+                    'notes', 'display')
     list_filter = (
         ('created_date', DateRangeFilter),
-        'scribe'
+        'scribe', 'display'
     )
     search_fields = ('shelfmark', 'source', 'page', 'folio',
                      'catalogue', 'date', 'scribe', 'resolution',
