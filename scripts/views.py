@@ -14,9 +14,9 @@ class ManuscriptList(generics.ListAPIView):
         
     def get_queryset(self):
         queryset = Manuscript.objects.all()
-        manifest_avail_flag = self.request.query_params.get('manifest_available', None)
-        if manifest_avail_flag is not None:
-            queryset = queryset.exclude(manifest=None)
+        display_flag = self.request.query_params.get('display', None)
+        if display_flag is not None:
+            queryset = queryset.exclude(display=False)
         return queryset
 
 
