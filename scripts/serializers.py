@@ -9,7 +9,7 @@ class ManuscriptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Manuscript
         fields = ('id', 'shelfmark', 'source', 'page', 'folio', 'scribe', 'date',
-                  'resolution', 'notes', 'manifest')
+                  'resolution', 'notes', 'manifest', 'display')
 
 
 class LetterSerializer(serializers.ModelSerializer):
