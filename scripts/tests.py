@@ -1,62 +1,66 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+
 class ManuscriptsTests(APITestCase):
 
-  def test_list_manuscripts(self):
-    url = '/api/manuscripts'
-    response = self.client.get(url, format='json')
-    self.assertEqual(response.status_code, status.HTTP_200_OK)
-    self.assertGreaterEqual(len(response.data), 0)
+    def test_list_manuscripts(self):
+        url = '/api/manuscripts'
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertGreaterEqual(len(response.data), 0)
 
-  def test_filter_manuscripts(self):
-    url = '/api/manuscripts'
-    response = self.client.get(url, format='json')
-    self.assertEqual(response.status_code, status.HTTP_200_OK)
-    full_list_length = len(response.data)
+    def test_filter_manuscripts(self):
+        url = '/api/manuscripts'
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        full_list_length = len(response.data)
 
-    url = '/api/manuscripts?display=true'
-    response = self.client.get(url, format='json')
-    self.assertEqual(response.status_code, status.HTTP_200_OK)
-    filtered_list_length = len(response.data)
+        url = '/api/manuscripts?display=true'
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        filtered_list_length = len(response.data)
 
-    self.assertGreaterEqual(full_list_length, filtered_list_length)
+        self.assertGreaterEqual(full_list_length, filtered_list_length)
+
 
 class PagesTests(APITestCase):
-  def test_list_pages(self):
-    url = '/api/pages'
-    response = self.client.get(url, format='json')
 
-    self.assertEqual(response.status_code, status.HTTP_200_OK)
-    self.assertGreaterEqual(len(response.data), 0)
+    def test_list_pages(self):
+        url = '/api/pages'
+        response = self.client.get(url, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertGreaterEqual(len(response.data), 0)
+
 
 class LettersTests(APITestCase):
-  def test_list_letters(self):
-    url = '/api/letters'
-    response = self.client.get(url, format='json')
+    def test_list_letters(self):
+        url = '/api/letters'
+        response = self.client.get(url, format='json')
 
-    self.assertEqual(response.status_code, status.HTTP_200_OK)
-    self.assertGreaterEqual(len(response.data), 0)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertGreaterEqual(len(response.data), 0)
+
 
 class CoordinatesTests(APITestCase):
-  def test_filter_coordinates(self):
-    url = '/api/coordinates?page_id=1'
-    response = self.client.get(url, format='json')
-    self.assertEqual(response.status_code, status.HTTP_200_OK)
-    self.assertGreaterEqual(len(response.data), 0)
+    def test_filter_coordinates(self):
+        url = '/api/coordinates?page_id=1'
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertGreaterEqual(len(response.data), 0)
 
-    url = '/api/coordinates?letter_id=1'
-    response = self.client.get(url, format='json')
-    self.assertEqual(response.status_code, status.HTTP_200_OK)
-    self.assertGreaterEqual(len(response.data), 0)
+        url = '/api/coordinates?letter_id=1'
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertGreaterEqual(len(response.data), 0)
 
-    url = '/api/coordinates?page_id=1'
-    response = self.client.get(url, format='json')
-    self.assertEqual(response.status_code, status.HTTP_200_OK)
-    self.assertGreaterEqual(len(response.data), 0)
+        url = '/api/coordinates?page_id=1'
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertGreaterEqual(len(response.data), 0)
 
-    url = '/api/coordinates?page_id=1&letter_id=1'
-    response = self.client.get(url, format='json')
-    self.assertEqual(response.status_code, status.HTTP_200_OK)
-    self.assertGreaterEqual(len(response.data), 0)
-
+        url = '/api/coordinates?page_id=1&letter_id=1'
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertGreaterEqual(len(response.data), 0)
