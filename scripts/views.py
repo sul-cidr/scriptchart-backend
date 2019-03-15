@@ -10,8 +10,14 @@ from scripts.serializers import CoordinatesSerializer
 
 
 class ManuscriptList(generics.ListAPIView):
-    queryset = Manuscript.objects.all()
     serializer_class = ManuscriptSerializer
+
+    def get_queryset(self):
+        queryset = Manuscript.objects.all()
+        display_flag = self.request.query_params.get('display', None)
+        if display_flag is not None:
+            queryset = queryset.exclude(display=False)
+        return queryset
 
 
 class ManuscriptDetail(generics.RetrieveAPIView):
@@ -52,8 +58,11 @@ class CoordinatesList(generics.ListAPIView):
     def get_queryset(self):
         queryset = Coordinates.objects.all()
         page_id = self.request.query_params.get('page_id', None)
+        letter_id = self.request.query_params.get('letter_id', None)
         if page_id is not None:
             queryset = queryset.filter(page_id=page_id)
+        if letter_id is not None:
+            queryset = queryset.filter(letter_id=letter_id)
         return queryset
 
 
