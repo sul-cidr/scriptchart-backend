@@ -25,7 +25,8 @@ class PageSerializer(serializers.ModelSerializer):
 
 
 class CoordinatesSerializer(serializers.ModelSerializer):
+    page = PageSerializer(read_only=True)
     class Meta:
         model = Coordinates
         fields = ('id', 'page', 'letter', 'top', 'left', 'width', 'height',
-                  'binary_url')
+                  'binary_url', 'page')

@@ -52,7 +52,6 @@ class PageDetail(generics.RetrieveAPIView):
 
 
 class CoordinatesList(generics.ListAPIView):
-    queryset = Coordinates.objects.all()
     serializer_class = CoordinatesSerializer
 
     def get_queryset(self):
