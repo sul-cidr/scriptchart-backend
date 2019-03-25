@@ -64,3 +64,10 @@ class CoordinatesTests(APITestCase):
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 0)
+
+class CroppingTests(APITestCase):
+    def test_image_crop(self):
+        url = '/api/crop?page_url=http://images.syriac.reclaim.hosting/manuscripts/Add.17224/add17724-57a.jpg&x=879&y=1384&w=111&h=97'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertGreaterEqual(len(response.content), 0)
