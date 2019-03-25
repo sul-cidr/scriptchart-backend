@@ -8,6 +8,27 @@ from scripts.serializers import PageSerializer
 from scripts.models import Coordinates
 from scripts.serializers import CoordinatesSerializer
 
+from django.http import HttpResponse
+from PIL import Image
+import requests
+from io import BytesIO
+
+
+class LetterImage(generics.ListAPIView):
+    def get(self, request, format=None):
+        page_url = self.request.GET.get('page_url')
+        x = int(self.request.GET.get('x') or 0)
+        y = int(self.request.GET.get('y') or 0)
+        w = int(self.request.GET.get('w') or 0)
+        h = int(self.request.GET.get('h') or 0)
+        url = requests.get(page_url, verify=False)
+        image = Image.open(BytesIO(url.content))
+        image_crop = image.crop([x, y, x + w, y + h])
+        response = HttpResponse(content_type="image/png")
+        image_crop.save(response, "PNG")
+        response['Content-Length'] = len(response.content)
+        return response
+
 
 class ManuscriptList(generics.ListAPIView):
     serializer_class = ManuscriptSerializer
