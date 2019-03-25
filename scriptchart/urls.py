@@ -15,7 +15,8 @@ urlpatterns = [
     path('api/pages', scripts.views.PageList.as_view()),
     path('api/pages/<int:pk>', scripts.views.PageDetail.as_view()),
     path('api/coordinates', scripts.views.CoordinatesList.as_view()),
-    path('api/coordinates/<int:pk>', scripts.views.CoordinatesDetail.as_view())
+    path('api/coordinates/<int:pk>', scripts.views.CoordinatesDetail.as_view()),
+    path('api/crop', scripts.views.LetterImage.as_view())
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
