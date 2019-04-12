@@ -43,10 +43,10 @@ def create_letter_zip(coordinates):
             last_url = coordinate.page.url
         x, w = coordinate.left, coordinate.width
         y, h = coordinate.top, coordinate.height
-        cid, letter = coordinate.id, coordinate.letter
+        letter = coordinate.letter
         page_name = (f"{coordinate.page.manuscript.shelfmark}_"
                      f"{coordinate.page.number}")
-        image_name = f"{page_name}_{x}_{y}_{w}_{h}_{letter}_{cid}.png"
+        image_name = f"{page_name}_{letter}_{x}_{y}_{w}_{h}.png"
         image_patch = BytesIO()
         image_crop = image.crop([x, y, x + w, y + h])
         image_crop.save(image_patch, format='PNG')

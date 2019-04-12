@@ -116,7 +116,7 @@ class DownloadCoordinatesMixin:
                                 content_type="application/zip")
         response['Content-Length'] = len(response.content)
         response['Content-Disposition'] = (
-            f'attachment; filename=Coordinates@{datetime.datetime.now()}.zip'
+            f'attachment; filename="Coordinates@{datetime.datetime.now()}.zip"'
         )
         return response
     download_as_zip.short_description = "Download selected"
@@ -173,7 +173,7 @@ class PageAdmin(admin.ModelAdmin):
         'manuscript'
     )
     list_editable = ('url', 'manuscript', 'number')
-    search_fields = ('url', 'manuscript', 'number')
+    search_fields = ('url', 'manuscript__page', 'number')
     autocomplete_fields = ('manuscript', )
     inlines = (CoordinatesInline, )
     date_hierarchy = 'modified_date'
@@ -228,7 +228,7 @@ class PageAdmin(admin.ModelAdmin):
         response = HttpResponse(zip_file.getvalue(),
                                 content_type="application/zip")
         response['Content-Length'] = len(response.content)
-        response['Content-Disposition'] = f'attachment; filename={page}.zip'
+        response['Content-Disposition'] = f'attachment; filename="{page}.zip"'
         return response
 
     def get_urls(self):
