@@ -1,8 +1,6 @@
 from rest_framework import generics
 from scripts.models import Manuscript
 from scripts.serializers import ManuscriptSerializer
-from scripts.models import Letter
-from scripts.serializers import LetterSerializer
 from scripts.models import Page
 from scripts.serializers import PageSerializer
 from scripts.models import Coordinates
@@ -44,16 +42,6 @@ class ManuscriptList(generics.ListAPIView):
 class ManuscriptDetail(generics.RetrieveAPIView):
     queryset = Manuscript.objects.all()
     serializer_class = ManuscriptSerializer
-
-
-class LetterList(generics.ListAPIView):
-    queryset = Letter.objects.all()
-    serializer_class = LetterSerializer
-
-
-class LetterDetail(generics.RetrieveAPIView):
-    queryset = Letter.objects.all()
-    serializer_class = LetterSerializer
 
 
 class PageList(generics.ListAPIView):
