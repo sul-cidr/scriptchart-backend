@@ -18,7 +18,7 @@ SECRET_KEY = os.environ.get(
 # TOFIX: Per the doucmentation, ALLOWED_HOSTS is only checked if DEBUG is
 #        false (i.e., in production). ALLOWED_HOSTS will need to be set
 #        correctly in deployed proudction environment if used.
-DEBUG = os.environ.get('DEBUG', 'true').lower() == 'true'
+DEBUG = os.environ.get('DEBUG', 'false').lower() == 'true'
 ALLOWED_HOSTS = os.environ.get(
     'ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0').split(',')
 INTERNAL_IPS = ['127.0.0.1',]
