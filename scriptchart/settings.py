@@ -21,6 +21,7 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get('DEBUG', 'true').lower() == 'true'
 ALLOWED_HOSTS = os.environ.get(
     'ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0').split(',')
+INTERNAL_IPS = ['127.0.0.1',]
 ADMIN_SITE_HEADER = 'Scriptchart administration'
 
 INSTALLED_APPS = [
@@ -40,6 +41,9 @@ INSTALLED_APPS = [
     'scripts',
 ]
 
+if DEBUG:
+    INSTALLED_APPS += ['django_extensions', 'debug_toolbar']
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -51,6 +55,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+if DEBUG:
+    MIDDLEWARE = [
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    ] + MIDDLEWARE
+
 
 ROOT_URLCONF = 'scriptchart.urls'
 

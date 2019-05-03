@@ -9,6 +9,8 @@ pylint = "*"
 tqdm = "*"
 ipdb = "*"
 flake8 = "*"
+django-debug-toolbar = "~=1.11"
+django-extensions = "~=2.1.6"
 
 [packages]
 requests = "~=2.21.0"
