@@ -10,6 +10,7 @@ from rest_framework.documentation import include_docs_urls
 
 # dash
 import scripts.views
+import scripts.letter_endpoint
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -20,7 +21,8 @@ urlpatterns = [
     path('api/pages/<int:pk>', scripts.views.PageDetail.as_view()),
     path('api/coordinates', scripts.views.CoordinatesList.as_view()),
     path('api/coordinates/<int:pk>', scripts.views.CoordinatesDetail.as_view()),
-    path('api/crop', scripts.views.LetterImage.as_view())
+    path('api/crop', scripts.views.LetterImage.as_view()),
+    path('api/letters', scripts.letter_endpoint.get_letters)
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
