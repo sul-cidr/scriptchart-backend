@@ -1,8 +1,14 @@
-from django.contrib import admin
-from django.urls import path
+# django
+from django.conf import settings
 from django.conf.urls import url
+from django.contrib import admin
+from django.urls import include, path
+
+# drf
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework.documentation import include_docs_urls
+
+# dash
 import scripts.views
 
 urlpatterns = [
@@ -20,3 +26,9 @@ urlpatterns = [
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
