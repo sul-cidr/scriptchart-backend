@@ -81,6 +81,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'scriptchart.wsgi.application'
+# Stop WhiteNoise emitting warnings when running tests
+# (see https://github.com/evansd/whitenoise/issues/95)
+WHITENOISE_AUTOREFRESH = DEBUG
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = 'static'
 
