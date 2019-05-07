@@ -72,6 +72,27 @@ def coordinates_image(coordinates, context_pixels=0):
 coordinates_image.safe = True
 
 
+class HasBinaryImageFilter(admin.SimpleListFilter):
+    title = "Has Binary Image?"
+    parameter_name = "binary_url"
+
+    def lookups(self, request, model_admin):
+        return (
+            ('not_null', 'Present'),
+            ('null', 'Absent'),
+        )
+
+    def queryset(self, request, queryset):
+        filter_string = self.parameter_name + '__isnull'
+        if self.value() == 'not_null':
+            is_null_false = {filter_string: False}
+            return queryset.filter(**is_null_false)
+
+        if self.value() == 'null':
+            is_null_true = {filter_string: True}
+            return queryset.filter(**is_null_true)
+
+
 class AdminURLImageWidget(AdminURLFieldWidget):
     def render(self, name, value, attrs=None, renderer=None):
         output = []
@@ -128,7 +149,9 @@ class CoordinatesAdmin(admin.ModelAdmin, DownloadCoordinatesMixin):
                     'height', 'width', 'binary_url')
     list_filter = (
         ('created_date', DateRangeFilter),
-        'letter'
+        HasBinaryImageFilter,
+        'letter',
+        'page__manuscript__resolution'
     )
     search_fields = (
         'page__manuscript__shelfmark', 'page__number', 'letter__letter'
