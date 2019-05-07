@@ -1,4 +1,6 @@
 from django.db import models
+from django.template.defaultfilters import slugify
+
 from .utils import get_sizes
 
 
@@ -16,6 +18,11 @@ class Manuscript(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
     display = models.BooleanField(default=False)
+    slug = models.SlugField(allow_unicode=True, unique=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.shelfmark)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.shelfmark}"

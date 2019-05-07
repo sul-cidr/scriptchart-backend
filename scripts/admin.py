@@ -151,7 +151,7 @@ class LetterAdmin(admin.ModelAdmin):
 
 @admin.register(Manuscript)
 class ManuscriptAdmin(admin.ModelAdmin):
-    list_display = ('shelfmark', 'source', 'page', 'folio',
+    list_display = ('slug', 'shelfmark', 'source', 'page', 'folio',
                     'catalogue', 'date', 'scribe', 'resolution',
                     'notes', 'display')
     list_filter = (
@@ -163,6 +163,7 @@ class ManuscriptAdmin(admin.ModelAdmin):
                      'notes')
     inlines = (PageInline, )
     date_hierarchy = 'modified_date'
+    readonly_fields = ('slug',)
 
 
 @admin.register(Page)
