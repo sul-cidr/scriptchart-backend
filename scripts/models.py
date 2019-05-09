@@ -25,7 +25,7 @@ class Manuscript(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.shelfmark}"
+        return f'{self.shelfmark}'
 
 
 class Page(models.Model):
@@ -39,7 +39,7 @@ class Page(models.Model):
     modified_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.manuscript.shelfmark} (p. {self.number})"
+        return f'{self.manuscript.shelfmark} (p. {self.number})'
 
     def save(self, *args, **kwargs):
         if self.url and not (self.height and self.width):
@@ -56,7 +56,7 @@ class Letter(models.Model):
     modified_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.letter}"
+        return f'{self.letter}'
 
 
 class Coordinates(models.Model):
@@ -71,10 +71,19 @@ class Coordinates(models.Model):
     binary_url = models.URLField(blank=True, null=True)
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
+    manuscript_id = models.PositiveSmallIntegerField(null=False)
 
     class Meta:
-        verbose_name_plural = "Coordinates"
+        verbose_name_plural = 'Coordinates'
+        indexes = [
+            models.Index(fields=('letter', 'manuscript_id'))
+        ]
 
     def __str__(self):
-        return (f"{self.page} "
-                f"[{self.top}, {self.left}, {self.height}, {self.width}]")
+        return (f'{self.page} '
+                f'[{self.top}, {self.left}, {self.height}, {self.width}]')
+
+    def save(self, *args, **kwargs):
+        self.manuscript_id = self.page.manuscript_id
+
+        super().save(*args, **kwargs)
