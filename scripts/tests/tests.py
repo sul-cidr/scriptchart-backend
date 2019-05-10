@@ -120,12 +120,17 @@ class LetterEndpointTests(APITestCase):
         # the number of mss should be equal to the number passed in the url
         self.assertEqual(len(response.data['mss']), num_ms_ids)
 
-        self.assertTrue(
-            all(str(ms_id) in response.data['mss'] for ms_id in ms_ids))
+        # the ms keys should match the ms_ids passed in
+        self.assertEqual(list(response.data['mss'].keys()), ms_ids)
 
         for ms, letters in response.data['mss'].items():
+            # the number of letters should match the number passed
             self.assertEqual(len(letters), num_letter_ids)
-            self.assertTrue(
-                all(str(letter_id) in letters for letter_id in letter_ids))
+
+            # the letter keys should match the letter_ids passed
+            self.assertEqual(list(letters.keys()), letter_ids)
+
+            # for each response, there should me no more than `count`
+            #  examples returned
             self.assertTrue(
                 all(len(examples) <= count for examples in letters.values()))
