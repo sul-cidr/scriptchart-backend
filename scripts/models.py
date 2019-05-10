@@ -1,6 +1,7 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 
+from .priority_field import PriorityField
 from .utils import get_sizes
 
 
@@ -72,16 +73,25 @@ class Coordinates(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
     manuscript_id = models.PositiveSmallIntegerField(null=False)
+    priority = PriorityField(
+        collection=('manuscript_id', 'letter'),
+        null=True, default=None, blank=True,
+        help_text='Examples with the lowest priorities will be selected first '
+        'for display in the Script Chart. Examples with no value here will '
+        'never be displayed in the Script Chart.<br>This value should only be '
+        'set if a binarized image has been uploaded.')
 
     class Meta:
         verbose_name_plural = 'Coordinates'
         indexes = [
+            models.Index(fields=('priority',)),
             models.Index(fields=('letter', 'manuscript_id'))
         ]
 
     def __str__(self):
-        return (f'{self.page} '
-                f'[{self.top}, {self.left}, {self.height}, {self.width}]')
+        return f'{self.page.manuscript.slug}/{self.letter.letter} ' +\
+               f'[{self.priority}], ' +\
+               f'{self.height}x{self.width} @{self.top},{self.left}'
 
     def save(self, *args, **kwargs):
         self.manuscript_id = self.page.manuscript_id
