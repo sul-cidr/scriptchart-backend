@@ -47,6 +47,8 @@ class Page(models.Model):
             _, (width, height) = get_sizes(self.url)
             self.height |= height
             self.width |= width
+        # ensure no spaces
+        self.number = ''.join(self.number.split())
         super().save(*args, **kwargs)
 
 

@@ -371,7 +371,9 @@ class PriorityFieldTests(TestCase):
             self.get_result(self.manuscript, self.letter), expected_result)
 
         # check that it's gone where it's supposed to
-        expected_alt_result = [('alt. page', 1)]
+        #  (Note: the space in 'alt. page' will have been expunged by the
+        #   `Page.save()` method.)
+        expected_alt_result = [('alt.page', 1)]
 
         self.assertEqual(
             self.get_result(self.alt_manuscript, self.letter),
