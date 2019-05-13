@@ -73,7 +73,7 @@ def get_letters(request):
 
     examples = Coordinates.objects.select_related('page').filter(
         manuscript_id__in=ms_ids, letter_id__in=letter_ids,
-        priority__lte=count, binary_url__isnull=False)
+        priority__lte=count)
 
     # the frontend depends on empty lists for missing values, so...
     # examples_dict = defaultdict(lambda: defaultdict(list))
@@ -93,7 +93,7 @@ def get_letters(request):
 
             "letter": example.letter_id,
 
-            "page": example.page.id,
+            "page": example.page.number,
             "pageurl": example.page.url,
             "pageheight": example.page.height,
             "pagewidth": example.page.width,
