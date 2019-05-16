@@ -136,6 +136,7 @@ class CoordinatesAdmin(admin.ModelAdmin, DownloadCoordinatesMixin):
     autocomplete_fields = ('page', 'letter')
     date_hierarchy = 'modified_date'
     actions = ['download_as_zip']
+    exclude = ('manuscript_id',)
 
 
 @admin.register(Letter)
