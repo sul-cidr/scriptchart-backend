@@ -125,13 +125,14 @@ class DownloadCoordinatesMixin:
 @admin.register(Coordinates)
 class CoordinatesAdmin(admin.ModelAdmin, DownloadCoordinatesMixin):
     list_display = (coordinates_image, 'letter', 'page', 'top', 'left',
-                    'height', 'width', 'binary_url')
+                    'height', 'width', 'binary_url', 'priority')
+    list_editable = ('priority',)
     list_filter = (
         ('created_date', DateRangeFilter),
         'letter'
     )
     search_fields = (
-        'page__manuscript__shelfmark', 'page__number', 'letter__letter'
+        'page__manuscript__shelfmark', 'page__manuscript__slug', 'page__number'
     )
     autocomplete_fields = ('page', 'letter')
     date_hierarchy = 'modified_date'

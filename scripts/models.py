@@ -1,4 +1,5 @@
-from django.db import models
+from django.db import connections, models
+from django.db.models.sql.compiler import SQLCompiler
 from django.template.defaultfilters import slugify
 
 from .priority_field import PriorityField
@@ -62,6 +63,43 @@ class Letter(models.Model):
         return f'{self.letter}'
 
 
+class PriorityNullsLastSQLCompiler(SQLCompiler):
+    """ Custom SQL compiler that prepends `priority IS NULL, ` to all
+        `ORDER BY` clauses that reference the `priority` field.
+    """
+
+    def get_order_by(self):
+        result = super().get_order_by()
+        if result:
+            new_result = []
+            for (expr, (sql, params, is_ref)) in result:
+                if expr.field == self.query.model._meta.get_field('priority'):
+                    sql = f'{self.query.model._meta.db_table}.' +\
+                          f'{expr.field.name} IS NULL, ' + sql
+                new_result.append((expr, (sql, params, is_ref)))
+            return new_result
+
+        return result
+
+
+class PriorityNullsLastQuery(models.sql.query.Query):
+    """ Use a custom compiler to inject the necessary SQL to ensure the model
+        is always ordered with null priority records last. """
+
+    def get_compiler(self, using=None, connection=None):
+        if using is None and connection is None:
+            raise ValueError('Need either using or connection')
+        if using:
+            connection = connections[using]
+        return PriorityNullsLastSQLCompiler(self, connection, using)
+
+
+class PriorityNullsLastQuerySet(models.QuerySet):
+    def __init__(self, model=None, query=None, using=None, hints=None):
+        super().__init__(model, query, using, hints)
+        self.query = query or PriorityNullsLastQuery(self.model)
+
+
 class Coordinates(models.Model):
     page = models.ForeignKey(to='Page', related_name='coordinates',
                              on_delete=models.CASCADE)
@@ -82,6 +120,8 @@ class Coordinates(models.Model):
         'for display in the Script Chart. Examples with no value here will '
         'never be displayed in the Script Chart.<br>This value should only be '
         'set if a binarized image has been uploaded.')
+
+    objects = PriorityNullsLastQuerySet.as_manager()
 
     class Meta:
         verbose_name_plural = 'Coordinates'
