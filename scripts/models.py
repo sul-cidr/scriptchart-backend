@@ -1,4 +1,8 @@
-from django.db import models
+from django.db import connections, models
+from django.db.models.sql.compiler import SQLCompiler
+from django.template.defaultfilters import slugify
+
+from .priority_field import PriorityField
 from .utils import get_sizes
 
 
@@ -16,9 +20,14 @@ class Manuscript(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
     display = models.BooleanField(default=False)
+    slug = models.SlugField(allow_unicode=True, unique=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.shelfmark)
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.shelfmark}"
+        return f'{self.shelfmark}'
 
 
 class Page(models.Model):
@@ -32,13 +41,15 @@ class Page(models.Model):
     modified_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.manuscript.shelfmark} (p. {self.number})"
+        return f'{self.manuscript.shelfmark} (p. {self.number})'
 
     def save(self, *args, **kwargs):
         if self.url and not (self.height and self.width):
             _, (width, height) = get_sizes(self.url)
             self.height |= height
             self.width |= width
+        # ensure no spaces
+        self.number = ''.join(self.number.split())
         super().save(*args, **kwargs)
 
 
@@ -49,7 +60,44 @@ class Letter(models.Model):
     modified_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.letter}"
+        return f'{self.letter}'
+
+
+class PriorityNullsLastSQLCompiler(SQLCompiler):
+    """ Custom SQL compiler that prepends `priority IS NULL, ` to all
+        `ORDER BY` clauses that reference the `priority` field.
+    """
+
+    def get_order_by(self):
+        result = super().get_order_by()
+        if result:
+            new_result = []
+            for (expr, (sql, params, is_ref)) in result:
+                if expr.field == self.query.model._meta.get_field('priority'):
+                    sql = f'{self.query.model._meta.db_table}.' +\
+                          f'{expr.field.name} IS NULL, ' + sql
+                new_result.append((expr, (sql, params, is_ref)))
+            return new_result
+
+        return result
+
+
+class PriorityNullsLastQuery(models.sql.query.Query):
+    """ Use a custom compiler to inject the necessary SQL to ensure the model
+        is always ordered with null priority records last. """
+
+    def get_compiler(self, using=None, connection=None):
+        if using is None and connection is None:
+            raise ValueError('Need either using or connection')
+        if using:
+            connection = connections[using]
+        return PriorityNullsLastSQLCompiler(self, connection, using)
+
+
+class PriorityNullsLastQuerySet(models.QuerySet):
+    def __init__(self, model=None, query=None, using=None, hints=None):
+        super().__init__(model, query, using, hints)
+        self.query = query or PriorityNullsLastQuery(self.model)
 
 
 class Coordinates(models.Model):
@@ -64,10 +112,30 @@ class Coordinates(models.Model):
     binary_url = models.URLField(blank=True, null=True)
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
+    manuscript_id = models.PositiveSmallIntegerField(null=False)
+    priority = PriorityField(
+        collection=('manuscript_id', 'letter'),
+        null=True, default=None, blank=True,
+        help_text='Examples with the lowest priorities will be selected first '
+        'for display in the Script Chart. Examples with no value here will '
+        'never be displayed in the Script Chart.<br>This value should only be '
+        'set if a binarized image has been uploaded.')
+
+    objects = PriorityNullsLastQuerySet.as_manager()
 
     class Meta:
-        verbose_name_plural = "Coordinates"
+        verbose_name_plural = 'Coordinates'
+        indexes = [
+            models.Index(fields=('priority',)),
+            models.Index(fields=('letter', 'manuscript_id'))
+        ]
 
     def __str__(self):
-        return (f"{self.page} "
-                f"[{self.top}, {self.left}, {self.height}, {self.width}]")
+        return f'{self.page.manuscript.slug}/{self.letter.letter} ' +\
+               f'[{self.priority}], ' +\
+               f'{self.height}x{self.width} @{self.top},{self.left}'
+
+    def save(self, *args, **kwargs):
+        self.manuscript_id = self.page.manuscript_id
+
+        super().save(*args, **kwargs)

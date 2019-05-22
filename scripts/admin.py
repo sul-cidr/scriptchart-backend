@@ -125,17 +125,19 @@ class DownloadCoordinatesMixin:
 @admin.register(Coordinates)
 class CoordinatesAdmin(admin.ModelAdmin, DownloadCoordinatesMixin):
     list_display = (coordinates_image, 'letter', 'page', 'top', 'left',
-                    'height', 'width', 'binary_url')
+                    'height', 'width', 'binary_url', 'priority')
+    list_editable = ('priority',)
     list_filter = (
         ('created_date', DateRangeFilter),
         'letter'
     )
     search_fields = (
-        'page__manuscript__shelfmark', 'page__number', 'letter__letter'
+        'page__manuscript__shelfmark', 'page__manuscript__slug', 'page__number'
     )
     autocomplete_fields = ('page', 'letter')
     date_hierarchy = 'modified_date'
     actions = ['download_as_zip']
+    exclude = ('manuscript_id',)
 
 
 @admin.register(Letter)
@@ -151,7 +153,7 @@ class LetterAdmin(admin.ModelAdmin):
 
 @admin.register(Manuscript)
 class ManuscriptAdmin(admin.ModelAdmin):
-    list_display = ('shelfmark', 'source', 'page', 'folio',
+    list_display = ('slug', 'shelfmark', 'source', 'page', 'folio',
                     'catalogue', 'date', 'scribe', 'resolution',
                     'notes', 'display')
     list_filter = (
@@ -163,6 +165,7 @@ class ManuscriptAdmin(admin.ModelAdmin):
                      'notes')
     inlines = (PageInline, )
     date_hierarchy = 'modified_date'
+    readonly_fields = ('slug',)
 
 
 @admin.register(Page)

@@ -7,8 +7,7 @@ from scripts.models import Coordinates
 class ManuscriptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Manuscript
-        fields = ('id', 'shelfmark', 'source', 'page', 'folio', 'scribe', 'date',
-                  'resolution', 'notes', 'manifest', 'display')
+        fields = ('id', 'slug', 'shelfmark', 'date', 'manifest')
 
 
 class PageSerializer(serializers.ModelSerializer):
