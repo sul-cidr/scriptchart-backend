@@ -10,6 +10,10 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Create Log dir
+          command: |
+            mkdir -p /home/circleci/logs/
+      - run:
           name: Setting permissions
           command: |
             sudo chown -R circleci:circleci /usr/local/bin
