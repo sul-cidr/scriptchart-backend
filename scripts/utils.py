@@ -44,7 +44,7 @@ def create_letter_zip(coordinates):
         x, w = coordinate.left, coordinate.width
         y, h = coordinate.top, coordinate.height
         letter = coordinate.letter
-        page_name = (f"{coordinate.page.manuscript.shelfmark}_"
+        page_name = (f"{coordinate.page.manuscript.slug}_"
                      f"{coordinate.page.number}")
         image_name = f"{page_name}_{letter}_{x}_{y}_{w}_{h}.png"
         image_patch = BytesIO()

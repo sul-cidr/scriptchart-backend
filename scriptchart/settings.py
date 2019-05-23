@@ -3,12 +3,26 @@ import os
 import dj_database_url
 from dotenv import load_dotenv
 
+# Install PyMySQL (0.9.3) to operate as mysqlclient (==MySQLdb),
+#  as we can't install the latter on the shared hosting.  Note, however,
+#  that Django >= 2.2 requires a version of mysqlclient >= 1.3.13 -- but
+#  PyMySQL installed in this way reports its compatibilty with MySQLdb at
+#  only version 1.3.12.  This latter is only a shim anyway, so we're
+#  re-shimming here to report compatibility with MySQLdb 1.4.2, the current
+#  version.  This works just fine (by which I mean all the DB tests from the
+#  Django project pass), with the exception of `models.BinaryField`.  So don't
+#  use that... :)
+#
+# Background:
+#  * https://github.com/PyMySQL/PyMySQL/issues/610
+#  * https://github.com/PyMySQL/PyMySQL/issues/790
+
 try:
     import pymysql  # pylint: disable=import-error
     pymysql.install_as_MySQLdb()
+    pymysql.version_info = (1, 4, 2, 'final', 0)
 except Exception:
     pass
-
 
 load_dotenv()
 
@@ -18,7 +32,7 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get('DEBUG', 'false').lower() == 'true'
 ALLOWED_HOSTS = os.environ.get(
     'ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0').split(',')
-INTERNAL_IPS = ['127.0.0.1',]
+INTERNAL_IPS = ['127.0.0.1']
 ADMIN_SITE_HEADER = 'Scriptchart administration'
 
 INSTALLED_APPS = [
@@ -81,11 +95,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'scriptchart.wsgi.application'
-# Stop WhiteNoise emitting warnings when running tests
-# (see https://github.com/evansd/whitenoise/issues/95)
-WHITENOISE_AUTOREFRESH = DEBUG
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-STATIC_ROOT = 'static'
 
 if 'DATABASE_URL' in os.environ:
     DATABASES = {
@@ -120,7 +129,57 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-STATIC_URL = '/static/'
+# Stop WhiteNoise emitting warnings when running tests
+# (see https://github.com/evansd/whitenoise/issues/95)
+WHITENOISE_AUTOREFRESH = DEBUG
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = os.getenv('STATIC_ROOT', 'static')
+STATIC_URL = os.getenv('STATIC_URL', '/static/')
+
+ADMINS = [tuple(_.split(',')) for _ in os.getenv('ADMINS', None).split(';')] \
+            if os.getenv('ADMINS', None) else []
+SERVER_EMAIL = 'syriacre@blondie.reclaimhosting.com'
+EMAIL_SUBJECT_PREFIX = '[DASH] '
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '%(asctime)s.%(msecs)03d: %(levelname)s %(message)s',
+            'datefmt': '%H:%M:%S'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, '..', 'logs', 'django.log'),
+            'formatter': 'simple'
+        },
+        'mail_admins': {
+            'level': 'WARNING',
+            'class': 'django.utils.log.AdminEmailHandler',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['file', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'console': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        }
+    },
+}
 
 
 if os.environ.get('DEBUG_SQL', False):
