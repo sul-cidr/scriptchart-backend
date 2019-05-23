@@ -10,7 +10,8 @@ With a working version on Python 3.7+ and Pipenv:
 $ pipenv sync --dev
 ```
 
-2. Create a database (if not created yet) and migrate. A `DATABASE_URL` can be defined in a `.env` file or set as an environment variable. See `.env_tempate` and (here)[https://github.com/kennethreitz/dj-database-url#url-schema] for details. It will default to `sqlite:///tmp/db.sqlite`
+2. Create a database (if not created yet) and migrate. A `DATABASE_URL` can be defined in a `.env` file or set as an environment variable. See `.env_tempate` and [here](https://github.com/kennethreitz/dj-database-url#url-schema) for details. It will default to `sqlite:///tmp/db.sqlite`.
+(If using MySQL, see the note about MySQL drivers in `scriptchart/settings.py`)
 ```
 $ touch tmp/db.sqlite
 $ pipenv run python manage.py migrate
