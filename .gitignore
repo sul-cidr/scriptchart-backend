@@ -105,7 +105,10 @@ venv.bak/
 
 #
 .vscode
-tmp
 mysql.cnf
 manImages
 static
+
+# these are created by the CloudLinux Passenger set-up on the shared host
+passenger_wsgi.py
+tmp
