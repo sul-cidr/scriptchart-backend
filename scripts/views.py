@@ -19,7 +19,7 @@ class LetterImage(generics.ListAPIView):
         y = int(self.request.GET.get('y') or 0)
         w = int(self.request.GET.get('w') or 0)
         h = int(self.request.GET.get('h') or 0)
-        url = requests.get(page_url, verify=False)
+        url = requests.get(page_url, verify=True)
         image = Image.open(BytesIO(url.content))
         image_crop = image.crop([x, y, x + w, y + h])
         response = HttpResponse(content_type="image/png")
