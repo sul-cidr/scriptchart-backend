@@ -155,6 +155,7 @@ WHITENOISE_AUTOREFRESH = DEBUG
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = os.getenv('STATIC_ROOT', 'static')
 STATIC_URL = os.getenv('STATIC_URL', '/static/')
+IMAGES_ROOT = os.getenv('IMAGES_ROOT', None)
 
 ADMINS = [tuple(_.split(',')) for _ in os.getenv('ADMINS', None).split(';')] \
             if os.getenv('ADMINS', None) else []

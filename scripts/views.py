@@ -1,26 +1,37 @@
-from rest_framework import generics
-from scripts.models import Manuscript
-from scripts.serializers import ManuscriptSerializer
-from scripts.models import Page
-from scripts.serializers import PageSerializer
-from scripts.models import Coordinates
-from scripts.serializers import CoordinatesSerializer
-
-from django.http import HttpResponse
-from PIL import Image
+import pathlib
 import requests
 from io import BytesIO
+
+from django.conf import settings
+from django.http import HttpResponse
+
+from rest_framework import generics
+
+from PIL import Image
+
+from scripts.models import Manuscript, Page, Coordinates
+from scripts.serializers import (
+    ManuscriptSerializer, PageSerializer, CoordinatesSerializer)
 
 
 class LetterImage(generics.ListAPIView):
     def get(self, request, format=None):
         page_url = self.request.GET.get('page_url')
-        x = int(self.request.GET.get('x') or 0)
-        y = int(self.request.GET.get('y') or 0)
-        w = int(self.request.GET.get('w') or 0)
-        h = int(self.request.GET.get('h') or 0)
-        url = requests.get(page_url, verify=True)
-        image = Image.open(BytesIO(url.content))
+        x = int(self.request.GET.get('x', 0))
+        y = int(self.request.GET.get('y', 0))
+        w = int(self.request.GET.get('w', 0))
+        h = int(self.request.GET.get('h', 0))
+
+        if settings.IMAGES_ROOT is None:
+            url = requests.get(page_url, verify=True)
+            image = Image.open(BytesIO(url.content))
+        else:
+            img_base = pathlib.Path(settings.IMAGES_ROOT)
+            path = page_url.replace(
+                'https://images.syriac.reclaim.hosting/', '')
+            img_path = img_base / path
+            image = Image.open(img_path)
+
         image_crop = image.crop([x, y, x + w, y + h])
         response = HttpResponse(content_type="image/png")
         image_crop.save(response, "PNG")
