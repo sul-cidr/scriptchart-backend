@@ -124,8 +124,16 @@ class DownloadCoordinatesMixin:
 
 @admin.register(Coordinates)
 class CoordinatesAdmin(admin.ModelAdmin, DownloadCoordinatesMixin):
-    list_display = (coordinates_image, 'letter', 'page', 'top', 'left',
-                    'height', 'width', 'binary_url', 'priority')
+
+    def trimmed_img_tag(self, obj):
+        if obj.binary_url is None:
+            return '-'
+        return format_html(f'<img src="{obj.binary_url}" />')
+
+    trimmed_img_tag.short_description = 'Trimmed Image'
+
+    list_display = (coordinates_image, 'trimmed_img_tag', 'letter', 'page',
+                    'top', 'left', 'height', 'width', 'binary_url', 'priority')
     list_editable = ('priority',)
     list_filter = (
         ('created_date', DateRangeFilter),
