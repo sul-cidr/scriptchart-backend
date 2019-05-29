@@ -63,7 +63,7 @@ class CoordinatesTests(APITestCase):
 
 class CroppingTests(APITestCase):
     def test_image_crop(self):
-        url = '/api/crop?page_url=http://images.syriac.reclaim.hosting/'
+        url = '/api/crop?page_url=https://images.syriac.reclaim.hosting/'
         url += 'manuscripts/Add.17224/add17724-57a.jpg&x=879&y=1384&w=111&h=97'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
