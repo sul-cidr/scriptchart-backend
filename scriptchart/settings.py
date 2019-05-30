@@ -3,26 +3,46 @@ import os
 import dj_database_url
 from dotenv import load_dotenv
 
-# Install PyMySQL (0.9.3) to operate as mysqlclient (==MySQLdb),
-#  as we can't install the latter on the shared hosting.  Note, however,
-#  that Django >= 2.2 requires a version of mysqlclient >= 1.3.13 -- but
-#  PyMySQL installed in this way reports its compatibilty with MySQLdb at
-#  only version 1.3.12.  This latter is only a shim anyway, so we're
-#  re-shimming here to report compatibility with MySQLdb 1.4.2, the current
-#  version.  This works just fine (by which I mean all the DB tests from the
-#  Django project pass), with the exception of `models.BinaryField`.  So don't
-#  use that... :)
+
+# MySQL Database Drivers
+# ======================
+#
+# MySQLdb is Django's recommended driver for MySQL.  However, it is not
+#  always available or installable in shared hosting environments such as
+#  Reclaim.  For this reason, it is not included as a dependency of DASH,
+#  and we depend on PyMySQL (a pure python driver installable with pip).
+#
+# There are 2 issues with this approach:
+#
+# 1) PyMySQL is not officially supported by the Django project, so we must
+#  install PyMySQL (0.9.3) to masquerade as mysqlclient (==MySQLdb).  However,
+#  that Django >= 2.2 requires a version of MySQLdb >= 1.3.13 -- but PyMySQL
+#  installed in this way reports its compatibilty with MySQLdb at only version
+#  1.3.12.  This latter is only a shim anyway, so we're re-shimming here to
+#  report compatibility with MySQLdb 1.4.2, the current version.  This works
+#  just fine (by which I mean all the DB tests from the Django project pass),
+#  with the exception of `models.BinaryField`.  So don't use that... :)
+#
+# 2) There is a bug in Django (#30380) which causes a crash when using PyMySQL
+#  in this way with DEBUG=True (this bug has been fixed, but it seems this fix
+#  won't be released until Django 3.0, late 2019/early 2020).  As a result, we
+#  suggest installing MySQLdb (`pipenv run pip install MySQLdb`) for local
+#  development work, and it will be preferred here if available (note that both
+#  python and MySQL development headers and libraries will need to be available
+#  for pip to be able to compile MySQLdb successfully).  Alternatively, use
+#  SQLite for development work.
 #
 # Background:
 #  * https://github.com/PyMySQL/PyMySQL/issues/610
 #  * https://github.com/PyMySQL/PyMySQL/issues/790
+#  * https://code.djangoproject.com/ticket/30380
 
 try:
+    import MySQLdb
+except ImportError:
     import pymysql  # pylint: disable=import-error
     pymysql.install_as_MySQLdb()
     pymysql.version_info = (1, 4, 2, 'final', 0)
-except Exception:
-    pass
 
 load_dotenv()
 
@@ -135,6 +155,7 @@ WHITENOISE_AUTOREFRESH = DEBUG
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = os.getenv('STATIC_ROOT', 'static')
 STATIC_URL = os.getenv('STATIC_URL', '/static/')
+IMAGES_ROOT = os.getenv('IMAGES_ROOT', None)
 
 ADMINS = [tuple(_.split(',')) for _ in os.getenv('ADMINS', None).split(';')] \
             if os.getenv('ADMINS', None) else []
