@@ -38,7 +38,7 @@ def create_letter_zip(coordinates):
     last_url = ""
     for coordinate in coordinates:
         if last_url != coordinate.page.url:
-            url = requests.get(coordinate.page.url, verify=False)
+            url = requests.get(coordinate.page.url, verify=True)
             image = Image.open(BytesIO(url.content))
             last_url = coordinate.page.url
         x, w = coordinate.left, coordinate.width
