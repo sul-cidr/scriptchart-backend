@@ -26,7 +26,7 @@ from dotenv import load_dotenv
 # 2) There is a bug in Django (#30380) which causes a crash when using PyMySQL
 #  in this way with DEBUG=True (this bug has been fixed, but it seems this fix
 #  won't be released until Django 3.0, late 2019/early 2020).  As a result, we
-#  suggest installing MySQLdb (`pipenv run pip install MySQLdb`) for local
+#  suggest installing MySQLdb (`pipenv run pip install mysqlclient`) for local
 #  development work, and it will be preferred here if available (note that both
 #  python and MySQL development headers and libraries will need to be available
 #  for pip to be able to compile MySQLdb successfully).  Alternatively, use
