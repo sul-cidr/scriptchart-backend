@@ -22,15 +22,18 @@ class LetterImage(generics.ListAPIView):
         w = int(self.request.GET.get('w', 0))
         h = int(self.request.GET.get('h', 0))
 
-        if settings.IMAGES_ROOT is None:
-            url = requests.get(page_url, verify=True)
-            image = Image.open(BytesIO(url.content))
-        else:
+        img_path = None
+        if settings.IMAGES_ROOT is not None:
             img_base = pathlib.Path(settings.IMAGES_ROOT)
             path = page_url.replace(
                 'https://images.syriac.reclaim.hosting/', '')
             img_path = img_base / path
+
+        if img_path and img_path.exists():
             image = Image.open(img_path)
+        else:
+            image_response = requests.get(page_url, verify=True)
+            image = Image.open(BytesIO(image_response.content))
 
         image_crop = image.crop([x, y, x + w, y + h])
         response = HttpResponse(content_type="image/png")
