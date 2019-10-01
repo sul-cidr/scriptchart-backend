@@ -101,6 +101,13 @@ class PriorityNullsLastQuerySet(models.QuerySet):
 
 
 class Coordinates(models.Model):
+
+    ORIENTATION_CHOICES = {
+        'DEFAULT': (1, 'Same as Page Image (default)'),
+        '180DEG': (2, 'Rotated through 180⁰')
+
+    }
+
     page = models.ForeignKey(to='Page', related_name='coordinates',
                              on_delete=models.CASCADE)
     letter = models.ForeignKey(to='Letter', related_name='coordinates',
@@ -120,6 +127,8 @@ class Coordinates(models.Model):
         'for display in the Script Chart. Examples with no value here will '
         'never be displayed in the Script Chart.<br>This value should only be '
         'set if a binarized image has been uploaded.')
+    orientation = models.PositiveSmallIntegerField(
+        choices=ORIENTATION_CHOICES.values(), default=ORIENTATION_CHOICES['DEFAULT'][0], null=False)
 
     objects = PriorityNullsLastQuerySet.as_manager()
 
