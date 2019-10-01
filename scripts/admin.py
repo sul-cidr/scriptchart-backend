@@ -18,7 +18,7 @@ from .utils import create_letter_zip
 
 def page_image(page):
     return mark_safe(f"""
-    <img src="{page.url}" width=100 style="border: 1px solid lightgrey;">
+    <img src="{page.url}" loading="lazy" width=100 style="border: 1px solid lightgrey;">
     """)
 
 
@@ -79,7 +79,7 @@ class AdminURLImageWidget(AdminURLFieldWidget):
             style = "border: 1px solid lightgrey; max-width: 100px;"
             output.append(
                 f'<a href="{value}" target="_blank">'
-                f'<img src="{value}" alt="{value}" style="{style}"/></a>')
+                f'<img src="{value}" loading="lazy" alt="{value}" style="{style}"/></a>')
         output.append(super().render(name, value, attrs, renderer))
         return mark_safe(u''.join(output))
 
