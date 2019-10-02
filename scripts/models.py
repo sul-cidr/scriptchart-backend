@@ -128,7 +128,8 @@ class Coordinates(models.Model):
         'never be displayed in the Script Chart.<br>This value should only be '
         'set if a binarized image has been uploaded.')
     orientation = models.PositiveSmallIntegerField(
-        choices=ORIENTATION_CHOICES.values(), default=ORIENTATION_CHOICES['DEFAULT'][0], null=False)
+        choices=ORIENTATION_CHOICES.values(),
+        default=ORIENTATION_CHOICES['DEFAULT'][0], null=False)
 
     objects = PriorityNullsLastQuerySet.as_manager()
 

@@ -18,7 +18,8 @@ from .utils import create_letter_zip
 
 def page_image(page):
     return mark_safe(f"""
-    <img src="{page.url}" loading="lazy" width=100 style="border: 1px solid lightgrey;">
+    <img src="{page.url}"
+         loading="lazy" width=100 style="border: 1px solid lightgrey;">
     """)
 
 
@@ -58,7 +59,9 @@ def coordinates_image(coordinates, context_pixels=0):
     }}
     </style>
     <div class="coords-img-container-{coordinates.id}"
-        style="{'transform: rotate(180deg);' if coordinates.orientation == 2 else ''}">
+        style="{
+            'transform: rotate(180deg);'
+            if coordinates.orientation == 2 else ''}">
         <img src="{coordinates.page.url}" style="
             position: absolute;
             top: -{ratio * coordinates.top - context_pixels}px;
@@ -80,7 +83,8 @@ class AdminURLImageWidget(AdminURLFieldWidget):
             style = "border: 1px solid lightgrey; max-width: 100px;"
             output.append(
                 f'<a href="{value}" target="_blank">'
-                f'<img src="{value}" loading="lazy" alt="{value}" style="{style}"/></a>')
+                f'<img src="{value}" loading="lazy" '
+                f'alt="{value}" style="{style}"/></a>')
         output.append(super().render(name, value, attrs, renderer))
         return mark_safe(u''.join(output))
 
