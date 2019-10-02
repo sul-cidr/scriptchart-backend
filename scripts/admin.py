@@ -57,7 +57,8 @@ def coordinates_image(coordinates, context_pixels=0):
         opacity: 0.5;
     }}
     </style>
-    <div class="coords-img-container-{coordinates.id}">
+    <div class="coords-img-container-{coordinates.id}"
+        style="{'transform: rotate(180deg);' if coordinates.orientation == 2 else ''}">
         <img src="{coordinates.page.url}" style="
             position: absolute;
             top: -{ratio * coordinates.top - context_pixels}px;
@@ -94,8 +95,8 @@ class PageInline(admin.TabularInline):
 class CoordinatesInline(admin.TabularInline):
     model = Coordinates
     extra = 1
-    fields = ('letter', 'top', 'left', 'height', 'width', 'render_coordinates',
-              'binary_url')
+    fields = ('letter', 'top', 'left', 'height', 'width', 'orientation',
+              'render_coordinates', 'binary_url')
     formfield_overrides = {models.URLField: {'widget': AdminURLImageWidget}}
     readonly_fields = ('render_coordinates', )
 
@@ -186,7 +187,7 @@ class PageAdmin(admin.ModelAdmin):
     list_editable = ('url', 'manuscript', 'number')
     search_fields = ('url', 'manuscript__page', 'number')
     autocomplete_fields = ('manuscript', )
-    inlines = (CoordinatesInline, )
+    inlines = (CoordinatesInline,)
     date_hierarchy = 'modified_date'
     formfield_overrides = {models.URLField: {'widget': AdminURLImageWidget}}
 
