@@ -96,7 +96,7 @@ class CoordinatesInline(admin.TabularInline):
     model = Coordinates
     extra = 1
     fields = ('letter', 'top', 'left', 'height', 'width', 'orientation',
-              'render_coordinates', 'binary_url')
+              'priority', 'render_coordinates', 'binary_url')
     formfield_overrides = {models.URLField: {'widget': AdminURLImageWidget}}
     readonly_fields = ('render_coordinates', )
 
