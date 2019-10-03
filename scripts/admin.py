@@ -18,7 +18,8 @@ from .utils import create_letter_zip
 
 def page_image(page):
     return mark_safe(f"""
-    <img src="{page.url}" width=100 style="border: 1px solid lightgrey;">
+    <img src="{page.url}"
+         loading="lazy" width=100 style="border: 1px solid lightgrey;">
     """)
 
 
@@ -57,7 +58,10 @@ def coordinates_image(coordinates, context_pixels=0):
         opacity: 0.5;
     }}
     </style>
-    <div class="coords-img-container-{coordinates.id}">
+    <div class="coords-img-container-{coordinates.id}"
+        style="{
+            'transform: rotate(180deg);'
+            if coordinates.orientation == 2 else ''}">
         <img src="{coordinates.page.url}" style="
             position: absolute;
             top: -{ratio * coordinates.top - context_pixels}px;
@@ -79,7 +83,8 @@ class AdminURLImageWidget(AdminURLFieldWidget):
             style = "border: 1px solid lightgrey; max-width: 100px;"
             output.append(
                 f'<a href="{value}" target="_blank">'
-                f'<img src="{value}" alt="{value}" style="{style}"/></a>')
+                f'<img src="{value}" loading="lazy" '
+                f'alt="{value}" style="{style}"/></a>')
         output.append(super().render(name, value, attrs, renderer))
         return mark_safe(u''.join(output))
 
@@ -94,8 +99,8 @@ class PageInline(admin.TabularInline):
 class CoordinatesInline(admin.TabularInline):
     model = Coordinates
     extra = 1
-    fields = ('letter', 'top', 'left', 'height', 'width', 'render_coordinates',
-              'binary_url')
+    fields = ('letter', 'top', 'left', 'height', 'width', 'orientation',
+              'priority', 'render_coordinates', 'binary_url')
     formfield_overrides = {models.URLField: {'widget': AdminURLImageWidget}}
     readonly_fields = ('render_coordinates', )
 
@@ -186,7 +191,7 @@ class PageAdmin(admin.ModelAdmin):
     list_editable = ('url', 'manuscript', 'number')
     search_fields = ('url', 'manuscript__page', 'number')
     autocomplete_fields = ('manuscript', )
-    inlines = (CoordinatesInline, )
+    inlines = (CoordinatesInline,)
     date_hierarchy = 'modified_date'
     formfield_overrides = {models.URLField: {'widget': AdminURLImageWidget}}
 
