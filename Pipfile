@@ -14,7 +14,7 @@ django-extensions = "~=2.1.6"
 
 [packages]
 requests = "~=2.21.0"
-pillow = "~=5.4.1"
+pillow = "~=8.2.0"
 coreapi = "~=2.3.3"
 pyyaml = "~=5.1"
 django-admin-rangefilter = "~=0.3.12"
